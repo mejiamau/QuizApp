@@ -1,12 +1,13 @@
 package com.example.android.quizapp;
 
+import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
-import android.widget.Toast;
+import android.app.AlertDialog;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         String userName = nameInput.getText().toString();
 
         // get answers from Question 1,
-        CheckBox q1_Checkbox1 = (CheckBox) findViewById(R.id.q1_option1);
+        CheckBox q1_Checkbox1 = (CheckBox) findViewById(R.id.q1_option1);    //Wrong answer, take away one point
         boolean CheckBox1Selected = q1_Checkbox1.isChecked();
 
         CheckBox q1_Checkbox2 = (CheckBox) findViewById(R.id.q1_option2);   //Correct answer
@@ -63,17 +64,28 @@ public class MainActivity extends AppCompatActivity {
         boolean RadioButton6a = question_6Button.isChecked();
 
 
+        int totalScore = CheckBoxPoints(CheckBox1Selected,CheckBox2Selected,CheckBox3Selected) +
+                RadioButtonPoints(RadioButton2a,RadioButton3a,RadioButton4a,RadioButton5a,RadioButton6a);
 
-        double totalScore = checkBoxScore + radioButtonScore;
 
 
-
-        // toast
+        AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+        alertDialog.setTitle("Final Score");
         if (totalScore == 7) {
-            Toast.makeText(this, userName + ", you scored " + totalScore + " out of 7" + "\n Perfect Score \n Congratulations!!!", Toast.LENGTH_LONG).show();
+            alertDialog.setMessage(userName + ", you scored " + totalScore + " out of 7" + "\nPerfect Score \nCongratulations!!!");
         } else {
-            Toast.makeText(this, userName + ", you scored " + totalScore + " out of 7" + "\n Press RESET to try again!", Toast.LENGTH_LONG).show();
+            alertDialog.setMessage(userName + ", you scored " + totalScore + " out of 7" + "\nPress RESET to try again!");
         }
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.show();
+
+
+
     }
 
 
@@ -83,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
      * @param q1_option1 boolean, did the user check this box -1 point
      * @param q1_option2 boolean, did the user check this box +1 point
      * @param q1_option3 boolean, did the user check this box +1 point
-     * @return integer of sum of total score
+     * @return checkBoxScore
      */
     private int CheckBoxPoints(boolean q1_option1, boolean q1_option2, boolean q1_option3) {
         if (q1_option1 == true) {
@@ -104,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
      * this method adds points for questions 2 to 6
      *
      * @param RadioButton2a/RadioButton3a/... boolean, did the user check the correct answer
-     * @return totalScore
+     * @return radioButtonScore
      */
     private int RadioButtonPoints(boolean RadioButton2a, boolean RadioButton3a, boolean RadioButton4a,
                                   boolean RadioButton5a, boolean RadioButton6a) {
@@ -130,6 +142,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+    /**
+     * Reset score back to 0.
+     */
 
     // when RESET button is clicked, set the totalScore to 0
     public void resetButton(View view) {
